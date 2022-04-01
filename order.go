@@ -1,7 +1,7 @@
 package tsort
 
-// IsOrdered returns true, if nodes of graph are topologically sorted.
-func IsOrdered[S ~[]N, N comparable](nodes S, successors Successors[N]) bool {
+// IsSorted returns true, if nodes of graph are topologically sorted.
+func IsSorted[S ~[]N, N comparable](nodes S, successors Successors[N]) bool {
 	var seen = set[N]{}
 	for _, node := range nodes {
 		seen.add(node)

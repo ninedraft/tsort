@@ -9,7 +9,7 @@ import (
 func TestIsOrdered(test *testing.T) {
 	t := func(name string, nodes []int, successors tsort.Successors[int], expected bool) {
 		test.Run(name, func(test *testing.T) {
-			var got = tsort.IsOrdered(nodes, successors)
+			var got = tsort.IsSorted(nodes, successors)
 			if got != expected {
 				switch {
 				case expected:
