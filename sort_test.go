@@ -3,7 +3,8 @@ package tsort_test
 import (
 	"encoding/binary"
 	"testing"
-	"tsort"
+
+	"github.com/ninedraft/tsort"
 )
 
 func TestSort(test *testing.T) {

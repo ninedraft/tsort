@@ -2,7 +2,8 @@ package tsort_test
 
 import (
 	"testing"
-	"tsort"
+
+	"github.com/ninedraft/tsort"
 )
 
 func TestIsOrdered(test *testing.T) {
