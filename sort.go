@@ -1,8 +1,9 @@
 package tsort
 
 // Sort performs topological sort of nodes on provided directed graph.
-// Provided nodes are sorted in place.
+// Returns sorted nodes in slice, len(result) <= len(nodes), len(result) != len(nodes) if cycle is detected.
 // Returns true, if provided graph cycle is detected.
+// Memory and CPU complexity ~O(N).
 func Sort[S ~[]N, N comparable](nodes S, successors Successors[N]) (_ S, hasCycle bool) {
 	var s = sorter[N]{
 		colored:    make(map[N]nodeColor, len(nodes)),
