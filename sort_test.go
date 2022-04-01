@@ -17,12 +17,12 @@ func TestSort(test *testing.T) {
 	}
 
 	var nodes = []int{2, 1, 3, 4, 0}
-	var hasCycle = tsort.Sort(nodes, g.From)
+	var sorted, hasCycle = tsort.Sort(nodes, g.From)
 	if hasCycle {
 		test.Fatal("graph has cycle")
 	}
 
-	assertOrdered(test, nodes, g.From)
+	assertOrdered(test, sorted, g.From)
 }
 
 func TestSort_Empty(test *testing.T) {
@@ -35,12 +35,12 @@ func TestSort_Empty(test *testing.T) {
 	}
 
 	var nodes = []int{}
-	var hasCycle = tsort.Sort(nodes, g.From)
+	var sorted, hasCycle = tsort.Sort(nodes, g.From)
 	if hasCycle {
 		test.Fatal("graph has cycle")
 	}
 
-	assertOrdered(test, nodes, g.From)
+	assertOrdered(test, sorted, g.From)
 }
 
 func TestSort_Cycled(test *testing.T) {
@@ -52,9 +52,9 @@ func TestSort_Cycled(test *testing.T) {
 		4: {0},
 	}
 	var nodes = g.All()
-	var hasCycle = tsort.Sort(nodes, g.From)
+	var sorted, hasCycle = tsort.Sort(nodes, g.From)
 	if !hasCycle {
-		test.Fatalf("graph expected to be cycled: %v", nodes)
+		test.Fatalf("graph %v expected to be cycled: %v", g, sorted)
 	}
 }
 
@@ -74,10 +74,40 @@ func FuzzSort(fuzz *testing.F) {
 			}
 		}
 		test.Log("nodes", nodes)
-		if !tsort.Sort(nodes, g.From) {
-			assertOrdered(test, nodes, g.From)
+		var sorted, hasCycle = tsort.Sort(nodes, g.From)
+		if !hasCycle {
+			assertOrdered(test, sorted, g.From)
 		}
 	})
+}
+
+const encodedGraphSize = 16
+
+func FuzzEncoding(fuzz *testing.F) {
+	fuzz.Add([]byte{})
+	fuzz.Fuzz(func(test *testing.T, data []byte) {
+		if len(data) != encodedGraphSize*encodedGraphSize {
+			return
+		}
+		g := decodeGraph((*[encodedGraphSize * encodedGraphSize]byte)(data))
+		nodes := g.All()
+		var sorted, hasCycle = tsort.Sort(nodes, g.From)
+		if !hasCycle {
+			assertOrdered(test, sorted, g.From)
+		}
+	})
+}
+
+func decodeGraph(data *[encodedGraphSize * encodedGraphSize]byte) graph {
+	var g = make(graph, encodedGraphSize)
+	for x := 0; x < encodedGraphSize; x++ {
+		for y := 0; y < encodedGraphSize; y++ {
+			if data[x+encodedGraphSize*y] == 1 && x != y {
+				g[x] = append(g[x], y)
+			}
+		}
+	}
+	return g
 }
 
 func decodeInts(data []byte) []int {

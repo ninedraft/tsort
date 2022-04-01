@@ -3,10 +3,10 @@ package tsort
 // Sort performs topological sort of nodes on provided directed graph.
 // Provided nodes are sorted in place.
 // Returns true, if provided graph cycle is detected.
-func Sort[S ~[]N, N comparable](nodes S, successors Successors[N]) (hasCycle bool) {
+func Sort[S ~[]N, N comparable](nodes S, successors Successors[N]) (_ S, hasCycle bool) {
 	var s = sorter[N]{
 		colored:    make(map[N]nodeColor, len(nodes)),
-		sorted:     nodes,
+		sorted:     make([]N, len(nodes)),
 		successors: successors,
 		offset:     len(nodes) - 1,
 	}
@@ -14,7 +14,11 @@ func Sort[S ~[]N, N comparable](nodes S, successors Successors[N]) (hasCycle boo
 		s.colored[node] = colorWhite
 	}
 	hasCycle = s.sort(nodes)
-	return hasCycle
+	var sorted = s.sorted
+	if s.offset > 0 {
+		sorted = sorted[s.offset:]
+	}
+	return S(sorted), hasCycle
 }
 
 type nodeColor int8
@@ -37,11 +41,6 @@ func (s *sorter[N]) sort(nodes []N) (hasCycle bool) {
 	for i := len(nodes) - 1; i >= 0; i-- {
 		var node = nodes[i]
 		var color, isKnown = s.colored[node]
-		// ignoring unmentioned parts of graph
-		// we are sorting only nodes slice
-		if !isKnown {
-			continue
-		}
 		switch color {
 		case colorBlack:
 			continue
@@ -55,8 +54,12 @@ func (s *sorter[N]) sort(nodes []N) (hasCycle bool) {
 				return hasCycle
 			}
 			s.colored[node] = colorBlack
-			s.sorted[s.offset] = node
-			s.offset--
+			// ignoring unmentioned parts of graph
+			// we are sorting only nodes slice
+			if isKnown {
+				s.sorted[s.offset] = node
+				s.offset--
+			}
 		}
 	}
 	return false
