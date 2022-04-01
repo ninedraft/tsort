@@ -2,14 +2,6 @@ package tsort
 
 type set[N comparable] map[N]struct{}
 
-func newSet[N comparable](items []N) set[N] {
-	var s = make(set[N], len(items))
-	for _, item := range items {
-		s.add(item)
-	}
-	return s
-}
-
 func (s set[N]) add(node N) {
 	s[node] = struct{}{}
 }
