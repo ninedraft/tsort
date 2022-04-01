@@ -1,3 +1,4 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/ninedraft/tsort.svg)](https://pkg.go.dev/github.com/ninedraft/tsort) [![](https://goreportcard.com/badge/github.com/ninedraft/tsort)](https://goreportcard.com/report/github.com/ninedraft/tsort) [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](https://go.dev/) [![Github tag](https://badgen.net/github/tag/ninedraft/tsort)](https://github.com/ninedraft/tsort/tags/)
 # tsort
 
 ## Installation
